@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"flag"
+	"html/template"
 	"log"
 	"net/http"
 	"os"
@@ -12,10 +13,10 @@ import (
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-
-	snippets models.SnippetStore
+	errorLog      *log.Logger
+	infoLog       *log.Logger
+	snippets      models.SnippetStore
+	templateCache map[string]*template.Template
 }
 
 func main() {
@@ -28,6 +29,12 @@ func main() {
 
 	if len(*dsn) == 0 {
 		errorLog.Panic("missing dsn flag")
+	}
+
+	templateCache, err := newTemplateCache()
+
+	if err != nil {
+		errorLog.Fatal(err)
 	}
 
 	db, err := openDB(*dsn)
@@ -43,6 +50,7 @@ func main() {
 		snippets: &models.SnippetModel{
 			DB: db,
 		},
+		templateCache: templateCache,
 	}
 
 	srv := &http.Server{

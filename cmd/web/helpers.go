@@ -38,6 +38,7 @@ func (app *application) render(w http.ResponseWriter, status int, page string, d
 
 	if err != nil {
 		app.serverError(w, err)
+		return
 	}
 
 	w.WriteHeader(status)

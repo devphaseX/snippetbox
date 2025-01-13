@@ -24,6 +24,12 @@ type SnippetModel struct {
 	DB *sql.DB
 }
 
+func NewSnippetModel(db *sql.DB) SnippetStore {
+	return &SnippetModel{
+		DB: db,
+	}
+}
+
 func (m *SnippetModel) Insert(title, content string, expires int) (int, error) {
 	stmt := `
 		INSERT INTO snippets (title, content, created, expires)

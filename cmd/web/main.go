@@ -21,6 +21,7 @@ type application struct {
 	errorLog       *log.Logger
 	infoLog        *log.Logger
 	snippets       models.SnippetStore
+	users          models.UserStore
 	templateCache  map[string]*template.Template
 	formDecoder    *form.Decoder
 	sessionManager *scs.SessionManager
@@ -58,11 +59,10 @@ func main() {
 	sessionManager.Lifetime = 12 * time.Hour
 
 	app := application{
-		infoLog:  infoLog,
-		errorLog: errorLog,
-		snippets: &models.SnippetModel{
-			DB: db,
-		},
+		infoLog:        infoLog,
+		errorLog:       errorLog,
+		snippets:       models.NewSnippetModel(db),
+		users:          models.NewUserModel(db),
 		templateCache:  templateCache,
 		formDecoder:    formDecoder,
 		sessionManager: sessionManager,
